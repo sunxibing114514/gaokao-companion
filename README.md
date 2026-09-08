@@ -27,6 +27,7 @@ M3(Material Design 3)风格 Windows 桌面工具:高考倒计时桌面组件 + �
 - ↑↓ 选择搜索结果,回车播放
 - **歌词命中的歌曲:播放时直接跳到歌词对应位置**
 - API 地址在设置中配置(NeteaseCloudMusicApi / Enhanced 兼容),**不硬编码**
+- 可选配置**网易云 Cookie**(`MUSIC_U=…;`,设置界面或 config.json 的 `neteaseCookie`),可解锁 VIP 歌曲;不填则匿名访问
 - `Ctrl+H+J+C` 停止播放;`Esc` 关闭搜索框;失焦自动关闭
 
 ### 4. 定时壁纸切换
@@ -53,6 +54,7 @@ M3(Material Design 3)风格 Windows 桌面工具:高考倒计时桌面组件 + �
   "countdownJsonUrl": "https://…/countdown.json",   // 倒计时数据源
   "soundsJsonUrl": "https://…/sounds.json",         // 句子→声音映射
   "neteaseApiBase": "https://wyyapi.hjymoon.us.ci/",// 网易云 API(可换任意兼容实例)
+  "neteaseCookie": "",                              // 网易云 Cookie(如 MUSIC_U=xxx;),可解锁 VIP 歌曲,留空匿名
   "sentenceIntervalMinutes": 5,                     // 句子切换间隔(分钟)
   "fontSize": 30,                                   // 组件字体大小
   "sentenceMaxWidth": 560,                          // 句子换行区最大宽度

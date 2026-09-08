@@ -52,6 +52,12 @@
                     <TextBlock Text="NeteaseCloudMusicApi / Enhanced 兼容接口,例如 https://wyyapi.hjymoon.us.ci/"
                                Style="{StaticResource M3FieldLabel}" TextWrapping="Wrap"/>
 
+                    <TextBlock Text="网易云 Cookie(可选,解锁 VIP 歌曲;留空匿名访问)" Style="{StaticResource M3FieldLabel}"/>
+                    <TextBox Text="{Binding NeteaseCookie, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource M3TextBox}"/>
+                    <TextBlock Text="填入形如 MUSIC_U=xxxxxx; 的 Cookie(浏览器登录网易云后 F12 → 网络 → 请求头里复制)。填了 MUSIC_U 的值也可以,程序会自动补全键名。"
+                               Style="{StaticResource M3FieldLabel}" TextWrapping="Wrap"/>
+
                     <TextBlock Text="倒计时外观" Style="{StaticResource M3SectionHeader}"/>
 
                     <Grid>

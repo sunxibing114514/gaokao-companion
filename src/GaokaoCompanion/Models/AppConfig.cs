@@ -14,6 +14,9 @@ public class AppConfig
     public string CountdownJsonUrl { get; set; } = "";
     public string SoundsJsonUrl { get; set; } = "";
     public string NeteaseApiBase { get; set; } = "https://wyyapi.hjymoon.us.ci/";
+
+    /// <summary>网易云 Cookie(如 MUSIC_U=xxx;…),可解锁 VIP 歌曲;留空匿名访问。</summary>
+    public string NeteaseCookie { get; set; } = "";
     public int SentenceIntervalMinutes { get; set; } = 5;
     public double FontSize { get; set; } = 30;
     public double SentenceMaxWidth { get; set; } = 560;
@@ -92,6 +95,7 @@ public class AppConfig
         CountdownJsonUrl = other.CountdownJsonUrl;
         SoundsJsonUrl = other.SoundsJsonUrl;
         NeteaseApiBase = other.NeteaseApiBase;
+        NeteaseCookie = other.NeteaseCookie;
         SentenceIntervalMinutes = other.SentenceIntervalMinutes;
         FontSize = other.FontSize;
         SentenceMaxWidth = other.SentenceMaxWidth;
@@ -126,6 +130,7 @@ public class AppConfig
         SoundsJsonUrl = SoundsJsonUrl.Trim();
         NeteaseApiBase = NeteaseApiBase.Trim();
         if (NeteaseApiBase.Length == 0) NeteaseApiBase = "https://wyyapi.hjymoon.us.ci/";
+        NeteaseCookie = NeteaseCookie.Trim();
 
         Wallpapers ??= new List<WallpaperRule>();
         foreach (var rule in Wallpapers)

@@ -33,6 +33,28 @@ public class NeteaseClient
 
     public string Base { get; set; } = "";
 
+    /// <summary>
+    /// 网易云 Cookie(如 MUSIC_U=xxx;…),保存在 config.json 的 neteaseCookie。
+    /// 提供后随每个 API 请求发送,可解锁 VIP/更高音质;留空则匿名访问。
+    /// </summary>
+    public string Cookie { get; set; } = "";
+
+    /// <summary>带可选 Cookie 头的 GET(每个请求独立 header,避免共享 DefaultRequestHeaders 的线程问题)。</summary>
+    private async Task<string> GetWithCookieAsync(string url, CancellationToken ct)
+    {
+        using var req = new HttpRequestMessage(HttpMethod.Get, url);
+        string cookie = Cookie.Trim();
+        if (cookie.Length > 0)
+        {
+            // 允许用户只填 MUSIC_U 的值,自动补全键名
+            if (!cookie.Contains('=', StringComparison.Ordinal)) cookie = "MUSIC_U=" + cookie;
+            req.Headers.TryAddWithoutValidation("Cookie", cookie);
+        }
+        using var resp = await Http.SendAsync(req, ct).ConfigureAwait(false);
+        resp.EnsureSuccessStatusCode();
+        return await resp.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+    }
+
     private string Api(string pathAndQuery)
     {
         string b = Base.Trim().TrimEnd('/');
@@ -79,7 +101,7 @@ public class NeteaseClient
         {
             string url = Api("/search?keywords=" + Uri.EscapeDataString(keyword) +
                              "&type=" + type + "&limit=30");
-            string json = await Http.GetStringAsync(url, ct).ConfigureAwait(false);
+            string json = await GetWithCookieAsync(url, ct).ConfigureAwait(false);
             return (ParseSearchResult(json, fromLyric), null);
         }
         catch (OperationCanceledException)
@@ -155,7 +177,7 @@ public class NeteaseClient
         {
             try
             {
-                string json = await Http.GetStringAsync(Api(path), ct).ConfigureAwait(false);
+                string json = await GetWithCookieAsync(Api(path), ct).ConfigureAwait(false);
                 using var doc = JsonDocument.Parse(json);
                 var root = doc.RootElement;
 
@@ -207,7 +229,7 @@ public class NeteaseClient
     {
         if (string.IsNullOrWhiteSpace(keyword)) return null;
 
-        string json = await Http.GetStringAsync(Api("/lyric?id=" + id), ct).ConfigureAwait(false);
+        string json = await GetWithCookieAsync(Api("/lyric?id=" + id), ct).ConfigureAwait(false);
         using var doc = JsonDocument.Parse(json);
         var root = doc.RootElement;
         if (!root.TryGetProperty("lrc", out var lrc) ||

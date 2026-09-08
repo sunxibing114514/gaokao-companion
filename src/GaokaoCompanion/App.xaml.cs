@@ -176,6 +176,7 @@ public partial class App : Application
         try
         {
             Netease.Base = Config.NeteaseApiBase;
+            Netease.Cookie = Config.NeteaseCookie;
             Audio.SetVolume(Config.Volume);
             _widget?.ApplyConfig();
             _wallpapers?.Restart();
