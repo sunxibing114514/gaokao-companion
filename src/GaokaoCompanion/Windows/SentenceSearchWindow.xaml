@@ -1,0 +1,39 @@
+<local:LauncherWindow x:Class="GaokaoCompanion.Windows.SentenceSearchWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:GaokaoCompanion.Windows"
+        Title="句子语音搜索"
+        Width="620"
+        SizeToContent="Height"
+        ShowActivated="True"
+        PreviewKeyDown="OnPreviewKeyDown">
+    <Border CornerRadius="16" Background="#F2211F26" BorderBrush="#44FFFFFF" BorderThickness="1" Padding="10" Margin="8">
+        <Border.Effect>
+            <DropShadowEffect Color="Black" BlurRadius="18" ShadowDepth="3" Opacity="0.5"/>
+        </Border.Effect>
+        <StackPanel>
+            <TextBox x:Name="SearchBox"
+                     Style="{StaticResource M3TextBox}"
+                     FontSize="16"
+                     Padding="14,10"
+                     TextChanged="OnSearchTextChanged"/>
+            <ListBox x:Name="ResultList"
+                     Style="{StaticResource M3ListBox}"
+                     MaxHeight="340"
+                     Margin="0,8,0,0"
+                     MouseDoubleClick="OnResultDoubleClick">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" TextWrapping="Wrap" MaxWidth="540"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <TextBlock x:Name="StatusText"
+                       Text="正在加载句子数据…"
+                       Foreground="{StaticResource OnSurfaceVariant}"
+                       FontSize="12"
+                       Margin="8,8,8,4"
+                       TextWrapping="Wrap"/>
+        </StackPanel>
+    </Border>
+</local:LauncherWindow>

@@ -1,0 +1,169 @@
+<Window x:Class="GaokaoCompanion.Windows.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="设置"
+        Width="600"
+        Height="760"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        Topmost="True"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
+    <Border CornerRadius="16" Background="{StaticResource Surface}" BorderBrush="#33FFFFFF" BorderThickness="1" Margin="10">
+        <Border.Effect>
+            <DropShadowEffect Color="Black" BlurRadius="24" ShadowDepth="4" Opacity="0.55"/>
+        </Border.Effect>
+        <Grid Margin="6">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- 标题栏 -->
+            <Grid Height="44" Margin="8,4,8,0" Background="Transparent" MouseLeftButtonDown="OnTitleBarMouseDown">
+                <TextBlock Text="设置 · 高考倒计时伴侣"
+                           FontSize="17" FontWeight="SemiBold"
+                           Foreground="{StaticResource OnSurface}"
+                           VerticalAlignment="Center" Margin="12,0,0,0"/>
+                <Button Content="✕" Style="{StaticResource M3IconButton}"
+                        HorizontalAlignment="Right" Click="OnCloseClick"/>
+            </Grid>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="16,4,16,8">
+                <StackPanel>
+
+                    <TextBlock Text="数据源与接口" Style="{StaticResource M3SectionHeader}"/>
+
+                    <TextBlock Text="倒计时 JSON 地址" Style="{StaticResource M3FieldLabel}"/>
+                    <TextBox Text="{Binding CountdownJsonUrl, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource M3TextBox}"/>
+                    <TextBlock Text="格式:{ &quot;date&quot;: &quot;2026-06-07 09:00&quot;, &quot;event&quot;: &quot;2026年高考&quot;, &quot;sentences&quot;: [&quot;…&quot;] }"
+                               Style="{StaticResource M3FieldLabel}" TextWrapping="Wrap"/>
+
+                    <TextBlock Text="句子语音 JSON 地址(功能:Ctrl+H+J+S)" Style="{StaticResource M3FieldLabel}"/>
+                    <TextBox Text="{Binding SoundsJsonUrl, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource M3TextBox}"/>
+                    <TextBlock Text="格式:{ &quot;句子&quot;: &quot;https://…/a.mp3&quot;, … }"
+                               Style="{StaticResource M3FieldLabel}" TextWrapping="Wrap"/>
+
+                    <TextBlock Text="网易云 API 地址(功能:Ctrl+H+J+N)" Style="{StaticResource M3FieldLabel}"/>
+                    <TextBox Text="{Binding NeteaseApiBase, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource M3TextBox}"/>
+                    <TextBlock Text="NeteaseCloudMusicApi / Enhanced 兼容接口,例如 https://wyyapi.hjymoon.us.ci/"
+                               Style="{StaticResource M3FieldLabel}" TextWrapping="Wrap"/>
+
+                    <TextBlock Text="倒计时外观" Style="{StaticResource M3SectionHeader}"/>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="字体大小(组件整体)" Style="{StaticResource M3FieldLabel}"/>
+                            <TextBox Text="{Binding FontSize, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource M3TextBox}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="句子切换间隔(分钟)" Style="{StaticResource M3FieldLabel}"/>
+                            <TextBox Text="{Binding SentenceIntervalMinutes, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource M3TextBox}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="句子换行区最大宽度(px,换行出现在“丨”后)" Style="{StaticResource M3FieldLabel}"/>
+                            <TextBox Text="{Binding SentenceMaxWidth, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource M3TextBox}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="倒计时文字最大宽度(px)" Style="{StaticResource M3FieldLabel}"/>
+                            <TextBox Text="{Binding CountdownMaxWidth, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource M3TextBox}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="组件背景不透明度(0-100)" Style="{StaticResource M3FieldLabel}"/>
+                            <TextBox Text="{Binding WidgetBackgroundOpacity, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource M3TextBox}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="搜索框不透明度(默认 30,数值越大越不透明)" Style="{StaticResource M3FieldLabel}"/>
+                            <TextBox Text="{Binding SearchOpacity, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource M3TextBox}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <CheckBox Content="倒计时组件置顶"
+                              IsChecked="{Binding WidgetTopmost}"
+                              Style="{StaticResource M3Switch}"
+                              Margin="2,12,0,0"/>
+
+                    <TextBlock Text="音量(0-100)" Style="{StaticResource M3FieldLabel}"/>
+                    <TextBox Text="{Binding Volume, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource M3TextBox}"/>
+
+                    <TextBlock Text="壁纸定时切换(星期 0=每天 1=周一 … 7=周日,时间 24 小时制)"
+                               Style="{StaticResource M3SectionHeader}" TextWrapping="Wrap"/>
+
+                    <ItemsControl x:Name="RulesList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource M3Card}" Margin="0,0,0,8">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="星期" VerticalAlignment="Center"
+                                                       Foreground="{StaticResource OnSurfaceVariant}" Margin="0,0,6,0"/>
+                                            <TextBox Text="{Binding Day, UpdateSourceTrigger=PropertyChanged}"
+                                                     Style="{StaticResource M3TextBox}" Width="56"/>
+                                            <TextBlock Text="时" VerticalAlignment="Center"
+                                                       Foreground="{StaticResource OnSurfaceVariant}" Margin="10,0,6,0"/>
+                                            <TextBox Text="{Binding Hour, UpdateSourceTrigger=PropertyChanged}"
+                                                     Style="{StaticResource M3TextBox}" Width="60"/>
+                                            <TextBlock Text="分" VerticalAlignment="Center"
+                                                       Foreground="{StaticResource OnSurfaceVariant}" Margin="10,0,6,0"/>
+                                            <TextBox Text="{Binding Minute, UpdateSourceTrigger=PropertyChanged}"
+                                                     Style="{StaticResource M3TextBox}" Width="60"/>
+                                        </StackPanel>
+                                        <Grid Margin="0,8,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox Text="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}"
+                                                     Style="{StaticResource M3TextBox}"/>
+                                            <Button Grid.Column="1" Content="浏览…" Style="{StaticResource M3TextButton}"
+                                                    Margin="8,0,0,0" Click="OnBrowseClick"/>
+                                            <Button Grid.Column="2" Content="删除" Style="{StaticResource M3TextButton}"
+                                                    Margin="8,0,0,0" Click="OnDeleteClick"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <Button Content="＋ 添加规则" Style="{StaticResource M3TextButton}" HorizontalAlignment="Left"
+                            Click="OnAddRuleClick"/>
+
+                    <TextBlock x:Name="ConfigPathText" Text="" Style="{StaticResource M3FieldLabel}" TextWrapping="Wrap"/>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <Border Grid.Row="2" Padding="16,10">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="保存并应用" Style="{StaticResource M3Button}" MinWidth="130" Click="OnSaveClick"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

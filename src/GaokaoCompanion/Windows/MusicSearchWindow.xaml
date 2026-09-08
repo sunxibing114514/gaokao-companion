@@ -1,0 +1,61 @@
+<local:LauncherWindow x:Class="GaokaoCompanion.Windows.MusicSearchWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:GaokaoCompanion.Windows"
+        Title="网易云音乐搜索"
+        Width="640"
+        SizeToContent="Height"
+        ShowActivated="True"
+        PreviewKeyDown="OnPreviewKeyDown">
+    <Border CornerRadius="16" Background="#F2211F26" BorderBrush="#44FFFFFF" BorderThickness="1" Padding="10" Margin="8">
+        <Border.Effect>
+            <DropShadowEffect Color="Black" BlurRadius="18" ShadowDepth="3" Opacity="0.5"/>
+        </Border.Effect>
+        <StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="SearchBox"
+                         Style="{StaticResource M3TextBox}"
+                         FontSize="16"
+                         Padding="14,10"
+                         TextChanged="OnSearchTextChanged"/>
+                <Button x:Name="SearchButton"
+                        Grid.Column="1"
+                        Content="搜索"
+                        Style="{StaticResource M3Button}"
+                        Margin="8,0,0,0"
+                        Click="OnSearchClick"/>
+            </Grid>
+            <ListBox x:Name="ResultList"
+                     Style="{StaticResource M3ListBox}"
+                     MaxHeight="360"
+                     Margin="0,8,0,0"
+                     MouseDoubleClick="OnResultDoubleClick">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" MaxWidth="560">
+                            <Border CornerRadius="4" Background="#33D0BCFF" Padding="4,1"
+                                    VerticalAlignment="Center"
+                                    Visibility="{Binding FromLyric, Converter={StaticResource BoolToVis}}">
+                                <TextBlock Text="词" FontSize="10" Foreground="{StaticResource OnPrimaryContainer}"/>
+                            </Border>
+                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Margin="6,0,0,0"
+                                       TextTrimming="CharacterEllipsis" MaxWidth="300"/>
+                            <TextBlock Text="{Binding Artist}" Foreground="{StaticResource OnSurfaceVariant}"
+                                       Margin="8,0,0,0" TextTrimming="CharacterEllipsis" MaxWidth="220"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <TextBlock x:Name="StatusText"
+                       Text="输入歌名或歌词,回车搜索 · ↑↓ 选择 · 回车播放 · Esc 关闭"
+                       Foreground="{StaticResource OnSurfaceVariant}"
+                       FontSize="12"
+                       Margin="8,8,8,4"
+                       TextWrapping="Wrap"/>
+        </StackPanel>
+    </Border>
+</local:LauncherWindow>
