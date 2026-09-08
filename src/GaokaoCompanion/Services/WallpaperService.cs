@@ -1,6 +1,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Threading;
+using GaokaoCompanion.Models;
 
 namespace GaokaoCompanion.Services;
 
