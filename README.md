@@ -59,7 +59,7 @@ M3(Material Design 3)风格 Windows 桌面工具:高考倒计时桌面组件 + �
   "fontSize": 30,                                   // 组件字体大小
   "sentenceMaxWidth": 560,                          // 句子换行区最大宽度
   "countdownMaxWidth": 720,
-  "widgetBackgroundOpacity": 60,
+  "widgetBackgroundOpacity": 0,                     // 0=纯文字透明背景,100=不透明卡片
   "widgetTopmost": true,
   "widgetLeft": null, "widgetTop": null,            // 组件位置(自动保存)
   "searchOpacity": 30,                              // 搜索框不透明度(默认 30)

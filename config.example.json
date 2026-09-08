@@ -7,7 +7,7 @@
   "fontSize": 30,
   "sentenceMaxWidth": 560,
   "countdownMaxWidth": 720,
-  "widgetBackgroundOpacity": 60,
+  "widgetBackgroundOpacity": 0,
   "widgetTopmost": true,
   "widgetLeft": null,
   "widgetTop": null,

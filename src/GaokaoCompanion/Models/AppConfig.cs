@@ -21,7 +21,8 @@ public class AppConfig
     public double FontSize { get; set; } = 30;
     public double SentenceMaxWidth { get; set; } = 560;
     public double CountdownMaxWidth { get; set; } = 720;
-    public int WidgetBackgroundOpacity { get; set; } = 60;
+    /// <summary>组件背景不透明度 0-100;0 = 完全透明(纯文字悬浮),100 = 不透明卡片。</summary>
+    public int WidgetBackgroundOpacity { get; set; } = 0;
     public bool WidgetTopmost { get; set; } = true;
     public double? WidgetLeft { get; set; }
     public double? WidgetTop { get; set; }

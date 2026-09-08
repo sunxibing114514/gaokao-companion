@@ -99,7 +99,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="组件背景不透明度(0-100)" Style="{StaticResource M3FieldLabel}"/>
+                            <TextBlock Text="组件背景不透明度(0=纯文字透明,100=不透明卡片)" Style="{StaticResource M3FieldLabel}"/>
                             <TextBox Text="{Binding WidgetBackgroundOpacity, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource M3TextBox}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2">

@@ -12,8 +12,8 @@
         SizeToContent="WidthAndHeight">
     <Border x:Name="RootBorder"
             CornerRadius="18"
-            Background="#991C1B1F"
-            BorderBrush="#33FFFFFF"
+            Background="Transparent"
+            BorderBrush="Transparent"
             BorderThickness="1"
             Padding="18,12"
             Margin="6"

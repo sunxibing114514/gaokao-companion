@@ -98,8 +98,13 @@ public partial class WidgetWindow : Window
         SentenceText.MaxWidth = c.SentenceMaxWidth;
         CountdownText.MaxWidth = c.CountdownMaxWidth;
 
-        byte alpha = (byte)(Math.Clamp(c.WidgetBackgroundOpacity, 0, 100) * 255 / 100);
+        int bgOpacity = Math.Clamp(c.WidgetBackgroundOpacity, 0, 100);
+        byte alpha = (byte)(bgOpacity * 255 / 100);
         RootBorder.Background = new SolidColorBrush(Color.FromArgb(alpha, 0x1C, 0x1B, 0x1F));
+        // 完全透明时同步隐藏边框描边(避免出现幽灵矩形轮廓);文字保留柔和阴影以便在浅色壁纸上可读
+        RootBorder.BorderBrush = bgOpacity == 0
+            ? Brushes.Transparent
+            : new SolidColorBrush(Color.FromArgb(0x33, 0xFF, 0xFF, 0xFF));
 
         _sentenceTimer.Interval = TimeSpan.FromMinutes(Math.Max(1, c.SentenceIntervalMinutes));
         _sentenceTimer.Stop();
