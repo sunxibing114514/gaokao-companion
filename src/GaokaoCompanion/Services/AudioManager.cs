@@ -22,7 +22,7 @@ public class AudioManager
         _uiDispatcher = Dispatcher.CurrentDispatcher;
         _player.MediaOpened += OnMediaOpened;
         _player.MediaFailed += (s, e) =>
-            SetStatus("播放失败:" + (e.ErrorException?.Message ?? e.ErrorCode.ToString()));
+            SetStatus("播放失败:" + (e.ErrorException?.Message ?? "未知错误"));
         _player.MediaEnded += (s, e) => SetStatus("播放结束");
     }
 

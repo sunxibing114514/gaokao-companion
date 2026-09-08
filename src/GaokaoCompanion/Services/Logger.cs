@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace GaokaoCompanion.Services;
 
 /// <summary>极简文件日志,写在 exe 同目录 log.txt,便于排查问题。</summary>

@@ -214,8 +214,11 @@ public partial class WidgetWindow : Window
             _winStartX = Left;
             _winStartY = Top;
             var t = PresentationSource.FromVisual(this)?.CompositionTarget?.TransformToDevice;
-            _scaleX = t?.M11 is > 0 ? t.M11 : 1.0;
-            _scaleY = t?.M22 is > 0 ? t.M22 : 1.0;
+            if (t.HasValue && t.Value.M11 > 0 && t.Value.M22 > 0)
+            {
+                _scaleX = t.Value.M11;
+                _scaleY = t.Value.M22;
+            }
             RootBorder.CaptureMouse();
             _holdTimer.Stop();
             _holdTimer.Start();

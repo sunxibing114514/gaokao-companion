@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -25,8 +27,8 @@ public partial class MusicSearchWindow : LauncherWindow
             _debounce.Stop();
             DoSearch();
         };
-        Audio.StatusChanged += OnAudioStatus;
-        Closed += (s, e) => Audio.StatusChanged -= OnAudioStatus;
+        App.Audio.StatusChanged += OnAudioStatus;
+        Closed += (s, e) => App.Audio.StatusChanged -= OnAudioStatus;
         Loaded += (s, e) =>
         {
             SearchBox.Focus();
