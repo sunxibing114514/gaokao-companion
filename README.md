@@ -61,6 +61,7 @@ M3(Material Design 3)风格 Windows 桌面工具:高考倒计时桌面组件 + �
   "sentenceMaxWidth": 560,                          // 句子换行区最大宽度
   "countdownMaxWidth": 720,
   "widgetBackgroundOpacity": 0,                     // 0=纯文字透明背景,100=不透明卡片
+  "widgetTextColor": "",                            // 组件文字颜色(如 "#000000");留空=跟随数据JSON的color字段;都为空=默认黑色
   "widgetTopmost": true,
   "widgetLeft": null, "widgetTop": null,            // 组件位置(自动保存)
   "searchOpacity": 30,                              // 搜索框不透明度(默认 30)
@@ -78,7 +79,8 @@ M3(Material Design 3)风格 Windows 桌面工具:高考倒计时桌面组件 + �
 {
   "date": "2027-06-30 09:00:00",
   "event": "阶段考",
-  "sentences": ["愿你合上笔盖的刹那,有侠客收剑入鞘的骄傲", "…"]
+  "sentences": ["愿你合上笔盖的刹那,有侠客收剑入鞘的骄傲", "…"],
+  "color": "#000000"    ← 可选:组件文字颜色(默认黑色),支持 #RRGGBB / #AARRGGBB / #RGB
 }
 {
   "句子一": "https://…/a.mp3",

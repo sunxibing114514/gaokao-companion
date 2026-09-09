@@ -4,12 +4,15 @@ using System.Text.RegularExpressions;
 
 namespace GaokaoCompanion.Models;
 
-/// <summary>外部倒计时 JSON:{ "date": "2026-06-07 09:00", "event": "2026年高考", "sentences": ["…"] }</summary>
+/// <summary>外部倒计时 JSON:{ "date": "2026-06-07 09:00", "event": "2026年高考", "sentences": ["…"], "color": "#000000" }</summary>
 public class CountdownData
 {
     public string? Date { get; set; }
     public string? Event { get; set; }
     public List<string> Sentences { get; set; } = new();
+
+    /// <summary>组件文字颜色(可选,如 "#000000"/"#FF5500"/"#80000000");空 = 使用默认黑色。</summary>
+    public string? Color { get; set; }
 
     public string EventDisplay => string.IsNullOrWhiteSpace(Event) ? "高考" : Event!;
 

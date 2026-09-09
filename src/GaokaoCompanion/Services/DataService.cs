@@ -99,6 +99,9 @@ public static class DataService
         if (root.TryGetProperty("event", out var eventEl) && eventEl.ValueKind == JsonValueKind.String)
             data.Event = eventEl.GetString();
 
+        if (root.TryGetProperty("color", out var colorEl) && colorEl.ValueKind == JsonValueKind.String)
+            data.Color = colorEl.GetString();
+
         if (root.TryGetProperty("sentences", out var sen))
         {
             if (sen.ValueKind == JsonValueKind.Array)

@@ -106,6 +106,8 @@ public partial class WidgetWindow : Window
             ? Brushes.Transparent
             : new SolidColorBrush(Color.FromArgb(0x33, 0xFF, 0xFF, 0xFF));
 
+        UpdateTextColor();
+
         _sentenceTimer.Interval = TimeSpan.FromMinutes(Math.Max(1, c.SentenceIntervalMinutes));
         _sentenceTimer.Stop();
         _sentenceTimer.Start();
@@ -114,6 +116,62 @@ public partial class WidgetWindow : Window
         {
             _lastUrl = c.DataJsonUrl;
             if (IsLoaded) LoadData();
+        }
+    }
+
+    /// <summary>
+    /// 组件文字颜色:config.json 的 widgetTextColor(若非空) > 数据 JSON 的 color 字段 > 默认黑色。
+    /// </summary>
+    private void UpdateTextColor()
+    {
+        string? hex = !string.IsNullOrWhiteSpace(App.Config.WidgetTextColor)
+            ? App.Config.WidgetTextColor
+            : _data?.Color;
+        var brush = ParseColor(hex) ?? Brushes.Black;
+        CountdownText.Foreground = brush;
+        SeparatorText.Foreground = brush;
+        SentenceText.Foreground = brush;
+    }
+
+    /// <summary>解析 "#RRGGBB" / "#AARRGGBB" / "#RGB";无效返回 null(调用方回退默认色)。</summary>
+    private static SolidColorBrush? ParseColor(string? hex)
+    {
+        if (string.IsNullOrWhiteSpace(hex)) return null;
+        string s = hex.Trim().TrimStart('#');
+        try
+        {
+            byte a = 255, r, g, b;
+            if (s.Length == 6)
+            {
+                r = byte.Parse(s[..2], System.Globalization.NumberStyles.HexNumber);
+                g = byte.Parse(s[2..4], System.Globalization.NumberStyles.HexNumber);
+                b = byte.Parse(s[4..6], System.Globalization.NumberStyles.HexNumber);
+            }
+            else if (s.Length == 8)
+            {
+                a = byte.Parse(s[..2], System.Globalization.NumberStyles.HexNumber);
+                r = byte.Parse(s[2..4], System.Globalization.NumberStyles.HexNumber);
+                g = byte.Parse(s[4..6], System.Globalization.NumberStyles.HexNumber);
+                b = byte.Parse(s[6..8], System.Globalization.NumberStyles.HexNumber);
+            }
+            else if (s.Length == 3)
+            {
+                r = byte.Parse(new string(s[0], 2), System.Globalization.NumberStyles.HexNumber);
+                g = byte.Parse(new string(s[1], 2), System.Globalization.NumberStyles.HexNumber);
+                b = byte.Parse(new string(s[2], 2), System.Globalization.NumberStyles.HexNumber);
+            }
+            else
+            {
+                return null;
+            }
+
+            var brush = new SolidColorBrush(Color.FromArgb(a, r, g, b));
+            brush.Freeze();
+            return brush;
+        }
+        catch
+        {
+            return null;
         }
     }
 
@@ -137,6 +195,7 @@ public partial class WidgetWindow : Window
         {
             _data = await DataService.FetchCountdownAsync(url);
             _sentenceIndex = -1;
+            UpdateTextColor(); // 数据 JSON 的 color 字段生效
             NextSentence();
             UpdateCountdownText();
         }

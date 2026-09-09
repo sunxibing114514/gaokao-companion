@@ -7,12 +7,18 @@
   "sentenceMaxWidth": 560,
   "countdownMaxWidth": 720,
   "widgetBackgroundOpacity": 0,
+  "widgetTextColor": "",
   "widgetTopmost": true,
   "widgetLeft": null,
   "widgetTop": null,
   "searchOpacity": 30,
   "volume": 80,
   "wallpapers": [
-    { "day": 1, "hour": 8, "minute": 0, "imagePath": "C:\\wallpapers\\monday.jpg" }
+    {
+      "day": 1,
+      "hour": 8,
+      "minute": 0,
+      "imagePath": "C:\\wallpapers\\monday.jpg"
+    }
   ]
 }

@@ -23,6 +23,8 @@ public class AppConfig
     public double CountdownMaxWidth { get; set; } = 720;
     /// <summary>组件背景不透明度 0-100;0 = 完全透明(纯文字悬浮),100 = 不透明卡片。</summary>
     public int WidgetBackgroundOpacity { get; set; } = 0;
+    /// <summary>组件文字颜色(如 "#000000");留空 = 跟随数据 JSON 的 color 字段;都为空 = 默认黑色。</summary>
+    public string WidgetTextColor { get; set; } = "";
     public bool WidgetTopmost { get; set; } = true;
     public double? WidgetLeft { get; set; }
     public double? WidgetTop { get; set; }
@@ -244,6 +246,7 @@ public class AppConfig
         SentenceMaxWidth = other.SentenceMaxWidth;
         CountdownMaxWidth = other.CountdownMaxWidth;
         WidgetBackgroundOpacity = other.WidgetBackgroundOpacity;
+        WidgetTextColor = other.WidgetTextColor;
         WidgetTopmost = other.WidgetTopmost;
         WidgetLeft = other.WidgetLeft;
         WidgetTop = other.WidgetTop;
@@ -264,6 +267,7 @@ public class AppConfig
         if (CountdownMaxWidth > 3000) CountdownMaxWidth = 3000;
         if (WidgetBackgroundOpacity < 0) WidgetBackgroundOpacity = 0;
         if (WidgetBackgroundOpacity > 100) WidgetBackgroundOpacity = 100;
+        WidgetTextColor = WidgetTextColor.Trim();
         if (SearchOpacity < 5) SearchOpacity = 5;
         if (SearchOpacity > 100) SearchOpacity = 100;
         if (Volume < 0) Volume = 0;
