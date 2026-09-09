@@ -21,13 +21,16 @@ public abstract class LauncherWindow : Window
         Opacity = Math.Clamp(App.Config.SearchOpacity, 5, 100) / 100.0;
         SourceInitialized += (s, e) => PositionTopCenter();
         Deactivated += (s, e) => TryClose();
+        // 关闭一开始就置位守卫:此后任何 Close()/TryClose() 都不会再重入
+        //(修复:Esc 直接 Close() 后,关闭过程中的失焦再次触发 Close →
+        // InvalidOperationException → 错误弹窗反复出现“关不掉”)
+        Closing += (s, e) => _closeRequested = true;
     }
 
     /// <summary>
-    /// 失焦自动关闭。必须防重入:窗口关闭过程中激活状态变化会再次触发 Deactivated,
-    /// 此时再调 Close() 会抛 InvalidOperationException(“无法在窗口关闭期间…”)导致关不掉。
+    /// 唯一的安全关闭入口(Esc、失焦都走这里):防重入 + 吞掉关闭期异常。
     /// </summary>
-    private void TryClose()
+    protected void TryClose()
     {
         if (_closeRequested) return;
         _closeRequested = true;

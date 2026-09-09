@@ -97,7 +97,7 @@ public partial class MusicSearchWindow : LauncherWindow
     {
         if (e.Key == Key.Escape)
         {
-            Close();
+            TryClose(); // 安全关闭(防重入),不要直接 Close()
             e.Handled = true;
             return;
         }

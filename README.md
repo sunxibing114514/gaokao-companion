@@ -82,7 +82,8 @@ M3(Material Design 3)风格 Windows 桌面工具:高考倒计时桌面组件 + �
 }
 {
   "句子一": "https://…/a.mp3",
-  "句子二": "https://…/b.mp3"
+  "句子二": "https://…/b.mp3",
+  "…": "https://…/n.mp3"      ← 音效映射条数不限,可加任意多条
 }
 ```
 
