@@ -135,6 +135,6 @@ public partial class SentenceSearchWindow : LauncherWindow
             return;
         }
         App.Audio.Play(url, sentence);
-        StatusText.Text = "正在播放:" + sentence + "(Ctrl+H+J+C 停止)";
+        StatusText.Text = "正在播放:" + sentence + "(Ctrl+Alt+X 停止)";
     }
 }

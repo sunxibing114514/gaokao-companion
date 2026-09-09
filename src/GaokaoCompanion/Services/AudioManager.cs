@@ -5,7 +5,7 @@ namespace GaokaoCompanion.Services;
 
 /// <summary>
 /// 统一音频播放器(句子语音 + 网易云音乐共用)。
-/// 不循环播放;Ctrl+H+J+C 调用 Stop() 即可关闭当前声音。
+/// 不循环播放;Ctrl+Alt+X 调用 Stop() 即可关闭当前声音。
 /// </summary>
 public class AudioManager
 {
