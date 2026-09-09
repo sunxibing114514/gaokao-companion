@@ -29,8 +29,9 @@ public partial class SettingsWindow : Window
 
     private void OnCloseClick(object sender, RoutedEventArgs e)
     {
-        // 未点保存直接关闭 → 放弃修改,恢复为磁盘上的配置
-        App.Config.ReloadFromDisk();
+        // 未点保存直接关闭 → 放弃修改,恢复为磁盘上的配置;任何异常都不能阻止窗口关闭
+        try { App.Config.ReloadFromDisk(); }
+        catch { /* 忽略,保证能关闭 */ }
         Close();
     }
 
@@ -67,14 +68,27 @@ public partial class SettingsWindow : Window
         try
         {
             App.Config.Wallpapers = _rules.ToList();
-            App.Config.Save();
+            // 先让设置立即生效(含网易云 Cookie),再持久化——
+            // 这样即使写文件失败,本次会话的功能也不受影响
             App.ApplyConfigChanges();
-            ConfigPathText.Text = "已保存:" + AppConfig.ConfigPath;
-            MessageBox.Show(this, "已保存并应用。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            try
+            {
+                App.Config.Save();
+                string msg = "已保存并应用:" + AppConfig.ConfigPath;
+                ConfigPathText.Text = msg;
+                MessageBox.Show(this, msg, "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception saveEx)
+            {
+                string warn = "设置已生效,但写入配置文件失败(下次启动会丢失):\n" + saveEx.Message;
+                ConfigPathText.Text = warn;
+                MessageBox.Show(this, warn, "警告", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, "保存失败:" + ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(this, "应用设置失败:" + ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

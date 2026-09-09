@@ -30,7 +30,62 @@ public class AppConfig
     public int Volume { get; set; } = 80;
     public List<WallpaperRule> Wallpapers { get; set; } = new();
 
-    public static string ConfigPath => Path.Combine(AppContext.BaseDirectory, "config.json");
+    private static string? _configPath;
+
+    /// <summary>当前生效的配置文件路径:优先 exe 同目录;不可写时自动回退 %APPDATA%\GaokaoCompanion\config.json。</summary>
+    public static string ConfigPath => _configPath ??= ResolveConfigPath();
+
+    private static string GetExeConfigPath() => Path.Combine(AppContext.BaseDirectory, "config.json");
+
+    private static string GetAppDataConfigPath() => Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "GaokaoCompanion", "config.json");
+
+    private static bool IsDirWritable(string dir)
+    {
+        try
+        {
+            Directory.CreateDirectory(dir);
+            string probe = Path.Combine(dir, ".write_probe");
+            File.WriteAllText(probe, "1");
+            File.Delete(probe);
+            return true;
+        }
+        catch { return false; }
+    }
+
+    private static string ResolveConfigPath()
+    {
+        string exePath = GetExeConfigPath();
+        string appDataPath = GetAppDataConfigPath();
+        bool exeExists = File.Exists(exePath);
+        bool appExists = File.Exists(appDataPath);
+
+        if (exeExists && appExists)
+        {
+            // 两边都有 → 取最近修改的(回退迁移后 AppData 通常更新)
+            return File.GetLastWriteTimeUtc(appDataPath) > File.GetLastWriteTimeUtc(exePath)
+                ? appDataPath
+                : exePath;
+        }
+        if (appExists) return appDataPath;
+        if (exeExists) return exePath; // 存在即可读;写入失败由 Save() 内部自愈
+        return IsDirWritable(Path.GetDirectoryName(exePath)!) ? exePath : appDataPath;
+    }
+
+    private static void TryClearReadOnly(string path)
+    {
+        try
+        {
+            if (File.Exists(path))
+            {
+                FileAttributes attrs = File.GetAttributes(path);
+                if ((attrs & FileAttributes.ReadOnly) != 0)
+                    File.SetAttributes(path, attrs & ~FileAttributes.ReadOnly);
+            }
+        }
+        catch { /* 尽力而为 */ }
+    }
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -67,9 +122,41 @@ public class AppConfig
     public void Save()
     {
         Normalize();
+        try
+        {
+            SaveTo(ConfigPath);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            SaveWithRecovery();
+        }
+        catch (IOException)
+        {
+            SaveWithRecovery();
+        }
+    }
+
+    /// <summary>保存失败自愈:清只读属性重试 → 仍失败则自动回退 %APPDATA% 并迁移。</summary>
+    private void SaveWithRecovery()
+    {
         string path = ConfigPath;
+        TryClearReadOnly(path);
+        try
+        {
+            SaveTo(path);
+            return;
+        }
+        catch { /* 继续回退 */ }
+
+        string fallback = GetAppDataConfigPath();
+        SaveTo(fallback);          // 仍失败则把真实异常抛给调用方
+        _configPath = fallback;
+    }
+
+    private void SaveTo(string path)
+    {
         string? dir = Path.GetDirectoryName(path);
-        if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
+        if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
         string tmp = path + ".tmp";
         File.WriteAllText(tmp, JsonSerializer.Serialize(this, JsonOptions));
         if (File.Exists(path)) File.Delete(path);

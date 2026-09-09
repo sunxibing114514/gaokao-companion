@@ -8,6 +8,8 @@ namespace GaokaoCompanion.Windows;
 /// </summary>
 public abstract class LauncherWindow : Window
 {
+    private bool _closeRequested;
+
     protected LauncherWindow()
     {
         WindowStyle = WindowStyle.None;
@@ -18,7 +20,25 @@ public abstract class LauncherWindow : Window
         Topmost = true;
         Opacity = Math.Clamp(App.Config.SearchOpacity, 5, 100) / 100.0;
         SourceInitialized += (s, e) => PositionTopCenter();
-        Deactivated += (s, e) => Close();
+        Deactivated += (s, e) => TryClose();
+    }
+
+    /// <summary>
+    /// 失焦自动关闭。必须防重入:窗口关闭过程中激活状态变化会再次触发 Deactivated,
+    /// 此时再调 Close() 会抛 InvalidOperationException(“无法在窗口关闭期间…”)导致关不掉。
+    /// </summary>
+    private void TryClose()
+    {
+        if (_closeRequested) return;
+        _closeRequested = true;
+        try
+        {
+            Close();
+        }
+        catch
+        {
+            // 窗口本来就在关闭,忽略任何关闭期异常
+        }
     }
 
     protected void PositionTopCenter()
