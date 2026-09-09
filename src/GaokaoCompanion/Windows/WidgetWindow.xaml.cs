@@ -292,9 +292,10 @@ public partial class WidgetWindow : Window
     {
         try
         {
+            // 合并保存:只回写位置,不覆盖用户手工修改过的其它配置字段
+            App.Config.SavePositionMerge(Left, Top);
             App.Config.WidgetLeft = Left;
             App.Config.WidgetTop = Top;
-            App.Config.Save();
         }
         catch (Exception ex)
         {

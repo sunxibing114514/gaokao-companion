@@ -20,6 +20,8 @@ public partial class App : Application
     private static SentenceSearchWindow? _sentenceSearch;
     private static MusicSearchWindow? _musicSearch;
     private static SettingsWindow? _settings;
+    /// <summary>只有真正完成启动的实例才允许在退出时写配置(第二实例的 Config 是默认值,写了会覆盖用户手工修改)。</summary>
+    private static bool _startupCompleted;
 
     public static AppConfig Config { get; private set; } = new();
     public static AudioManager Audio { get; private set; } = new();
@@ -67,6 +69,7 @@ public partial class App : Application
 
         InitTray();
         ApplyConfigChanges();
+        _startupCompleted = true;
         Logger.Info("启动完成");
     }
 
@@ -197,27 +200,32 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
-        try
+        if (_startupCompleted)
         {
-            _widget?.SavePositionNow();
-            Config.Save();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error("退出时保存配置失败", ex);
+            // 只合并保存组件位置(内部以磁盘内容为准,不会覆盖用户手工修改的字段)。
+            // 不再整体 Config.Save():设置类修改均由设置窗口的「保存并应用」显式落盘。
+            try
+            {
+                _widget?.SavePositionNow();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("退出时保存配置失败", ex);
+            }
+
+            try
+            {
+                _hotkeys?.Dispose();
+                _tray?.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("释放资源失败", ex);
+            }
+
+            Logger.Info("应用退出");
         }
 
-        try
-        {
-            _hotkeys?.Dispose();
-            _tray?.Dispose();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error("释放资源失败", ex);
-        }
-
-        Logger.Info("应用退出");
         base.OnExit(e);
     }
 }

@@ -47,7 +47,9 @@ M3(Material Design 3)风格 Windows 桌面工具:高考倒计时桌面组件 + �
 
 ## 配置文件(config.json)
 
-首次运行自动生成,**优先 exe 同目录;该目录不可写时(如带只读属性/被占用)自动回退到 `%APPDATA%\GaokaoCompanion\config.json`**。数据源 JSON 支持把倒计时对象和句子映射对象拼在同一个文件里(两个 URL 可以指向同一地址),程序会自动挑出各自需要的对象。示例见 [`config.example.json`](config.example.json):
+首次运行自动生成,**优先 exe 同目录;该目录不可写时(如带只读属性/被占用)自动回退到 `%APPDATA%\GaokaoCompanion\config.json`**。数据源 JSON 支持把倒计时对象和句子映射对象拼在同一个文件里(两个 URL 可以指向同一地址),程序会自动挑出各自需要的对象。
+
+> **手工编辑友好**:程序只会回写组件位置两个字段(合并保存),你手工修改的其它内容(数据源地址、Cookie、壁纸规则等)不会被程序覆盖——运行中编辑也一样。设置窗口里的修改则需点击「保存并应用」落盘。示例见 [`config.example.json`](config.example.json):
 
 ```jsonc
 {

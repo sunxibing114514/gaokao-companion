@@ -163,6 +163,30 @@ public class AppConfig
         File.Move(tmp, path);
     }
 
+    public static AppConfig? LoadFromDisk()
+    {
+        try
+        {
+            string path = ConfigPath;
+            if (!File.Exists(path)) return null;
+            return JsonSerializer.Deserialize<AppConfig>(File.ReadAllText(path), JsonOptions);
+        }
+        catch { return null; }
+    }
+
+    /// <summary>
+    /// 合并保存组件位置:先读磁盘当前内容(可能被用户手工编辑过),仅回写位置两个字段。
+    /// 避免用内存配置整体覆盖磁盘、抹掉用户对 config.json 的手工修改。
+    /// </summary>
+    public void SavePositionMerge(double? left, double? top)
+    {
+        var target = LoadFromDisk() ?? this;
+        target.WidgetLeft = left;
+        target.WidgetTop = top;
+        target.Normalize();
+        target.Save();
+    }
+
     public void ReloadFromDisk()
     {
         var fresh = new AppConfig();
