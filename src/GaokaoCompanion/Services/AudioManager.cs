@@ -17,13 +17,23 @@ public class AudioManager
     public string StatusText { get; private set; } = "空闲";
     public event Action<string>? StatusChanged;
 
+    /// <summary>播放状态变化:title = 正在播放的标题;null = 停止/结束/失败(用于隐藏「正在播放」小窗)。</summary>
+    public event Action<string?>? PlaybackChanged;
+
     public AudioManager()
     {
         _uiDispatcher = Dispatcher.CurrentDispatcher;
         _player.MediaOpened += OnMediaOpened;
         _player.MediaFailed += (s, e) =>
+        {
             SetStatus("播放失败:" + (e.ErrorException?.Message ?? "未知错误"));
-        _player.MediaEnded += (s, e) => SetStatus("播放结束");
+            FirePlaybackChanged(null);
+        };
+        _player.MediaEnded += (s, e) =>
+        {
+            SetStatus("播放结束");
+            FirePlaybackChanged(null);
+        };
     }
 
     public void SetVolume(int percent)
@@ -76,6 +86,7 @@ public class AudioManager
                     ? "(从 " + FormatTime(startAt.Value) + " 开始)"
                     : "";
                 SetStatus("正在播放:" + label + seekInfo);
+                FirePlaybackChanged(label);
             }
             catch (Exception ex)
             {
@@ -94,6 +105,7 @@ public class AudioManager
                 _player.Stop();
                 _player.Close();
                 SetStatus("已停止播放");
+                FirePlaybackChanged(null);
             }
             catch (Exception ex)
             {
@@ -106,6 +118,14 @@ public class AudioManager
     {
         if (_uiDispatcher.CheckAccess()) action();
         else _uiDispatcher.BeginInvoke(action);
+    }
+
+    private void FirePlaybackChanged(string? title)
+    {
+        var handler = PlaybackChanged;
+        if (handler == null) return;
+        if (_uiDispatcher.CheckAccess()) handler(title);
+        else _uiDispatcher.BeginInvoke(() => handler(title));
     }
 
     private void SetStatus(string text)

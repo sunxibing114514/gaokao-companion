@@ -20,6 +20,7 @@ public partial class App : Application
     private static SentenceSearchWindow? _sentenceSearch;
     private static MusicSearchWindow? _musicSearch;
     private static SettingsWindow? _settings;
+    private static NowPlayingWindow? _nowPlaying;
     /// <summary>只有真正完成启动的实例才允许在退出时写配置(第二实例的 Config 是默认值,写了会覆盖用户手工修改)。</summary>
     private static bool _startupCompleted;
 
@@ -56,6 +57,7 @@ public partial class App : Application
 
         Audio = new AudioManager();
         Netease = new NeteaseClient();
+        Audio.PlaybackChanged += OnPlaybackChanged;
 
         _widget = new WidgetWindow();
         _widget.Show();
@@ -71,6 +73,18 @@ public partial class App : Application
         ApplyConfigChanges();
         _startupCompleted = true;
         Logger.Info("启动完成");
+    }
+
+    /// <summary>播放状态 → 右下角「正在播放」M3 毛玻璃小窗(播放显示,停止/失败/播完隐藏)。</summary>
+    private static void OnPlaybackChanged(string? title)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            _nowPlaying?.HideToast();
+            return;
+        }
+        _nowPlaying ??= new NowPlayingWindow();
+        _nowPlaying.Notify(title);
     }
 
     private void OnChordTriggered(Chord chord)

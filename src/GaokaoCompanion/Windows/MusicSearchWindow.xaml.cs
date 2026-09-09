@@ -80,7 +80,9 @@ public partial class MusicSearchWindow : LauncherWindow
                 ResultList.SelectedIndex = 0;
                 ResultList.ScrollIntoView(ResultList.SelectedItem);
                 StatusText.Text = "找到 " + _results.Count + " 个结果 · ↑↓ 选择 · 回车播放 · 带「词」为歌词命中";
-                ResultList.Focus();
+                // 注意:不要在这里抢焦点(原来有 ResultList.Focus()),
+                // 否则用户还在打拼音时组词会被强制打断。↑↓/回车在窗口级
+                // PreviewKeyDown 已处理,与焦点位置无关。
             }
         }
         catch (Exception ex)
@@ -171,6 +173,7 @@ public partial class MusicSearchWindow : LauncherWindow
 
             string label = song.Artist.Length > 0 ? song.Name + " - " + song.Artist : song.Name;
             App.Audio.Play(url, label, seek);
+            TryClose(); // 已开始播放 → 搜索框关闭,右下角弹出「正在播放」小窗
         }
         catch (Exception ex)
         {

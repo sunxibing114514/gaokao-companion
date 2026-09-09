@@ -153,8 +153,10 @@ public class AppConfig
             }
         }
 
+        // 只在配置文件不存在时生成(首次运行);已存在则直接使用,不做任何改写
         var fresh = new AppConfig();
         fresh.Save();
+        Console.Error.WriteLine("首次运行:已生成配置文件 " + path);
         return fresh;
     }
 
