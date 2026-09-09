@@ -11,8 +11,8 @@ namespace GaokaoCompanion.Models;
 /// </summary>
 public class AppConfig
 {
-    public string CountdownJsonUrl { get; set; } = "";
-    public string SoundsJsonUrl { get; set; } = "";
+    /// <summary>唯一的数据 JSON 地址:倒计时数据 + 句子音效映射共用一个文件(文件内两个对象可并列)。</summary>
+    public string DataJsonUrl { get; set; } = "";
     public string NeteaseApiBase { get; set; } = "https://wyyapi.hjymoon.us.ci/";
 
     /// <summary>网易云 Cookie(如 MUSIC_U=xxx;…),可解锁 VIP 歌曲;留空匿名访问。</summary>
@@ -93,6 +93,45 @@ public class AppConfig
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
     };
 
+    /// <summary>统一解析配置 JSON,并迁移旧版双字段(countdownJsonUrl/soundsJsonUrl → dataJsonUrl)。</summary>
+    private static AppConfig? ParseConfigJson(string text)
+    {
+        AppConfig? cfg;
+        try
+        {
+            cfg = JsonSerializer.Deserialize<AppConfig>(text, JsonOptions);
+        }
+        catch
+        {
+            return null;
+        }
+        if (cfg == null) return null;
+
+        if (string.IsNullOrWhiteSpace(cfg.DataJsonUrl))
+        {
+            try
+            {
+                using var doc = JsonDocument.Parse(text);
+                var root = doc.RootElement;
+                if (root.ValueKind == JsonValueKind.Object)
+                {
+                    string? legacy = null;
+                    if (root.TryGetProperty("countdownJsonUrl", out var c) && c.ValueKind == JsonValueKind.String)
+                        legacy = c.GetString();
+                    if (string.IsNullOrWhiteSpace(legacy) &&
+                        root.TryGetProperty("soundsJsonUrl", out var s) && s.ValueKind == JsonValueKind.String)
+                        legacy = s.GetString();
+                    if (!string.IsNullOrWhiteSpace(legacy))
+                        cfg.DataJsonUrl = legacy!.Trim();
+                }
+            }
+            catch { /* 迁移失败忽略 */ }
+        }
+
+        cfg.Normalize();
+        return cfg;
+    }
+
     public static AppConfig Load()
     {
         string path = ConfigPath;
@@ -100,10 +139,10 @@ public class AppConfig
         {
             try
             {
-                var loaded = JsonSerializer.Deserialize<AppConfig>(File.ReadAllText(path), JsonOptions);
+                string text = File.ReadAllText(path);
+                var loaded = ParseConfigJson(text);
                 if (loaded != null)
                 {
-                    loaded.Normalize();
                     return loaded;
                 }
             }
@@ -169,7 +208,7 @@ public class AppConfig
         {
             string path = ConfigPath;
             if (!File.Exists(path)) return null;
-            return JsonSerializer.Deserialize<AppConfig>(File.ReadAllText(path), JsonOptions);
+            return ParseConfigJson(File.ReadAllText(path));
         }
         catch { return null; }
     }
@@ -189,23 +228,13 @@ public class AppConfig
 
     public void ReloadFromDisk()
     {
-        var fresh = new AppConfig();
-        if (File.Exists(ConfigPath))
-        {
-            try
-            {
-                var loaded = JsonSerializer.Deserialize<AppConfig>(File.ReadAllText(ConfigPath), JsonOptions);
-                if (loaded != null) fresh = loaded;
-            }
-            catch { /* 文件损坏时保持默认 */ }
-        }
+        var fresh = LoadFromDisk() ?? new AppConfig();
         CopyFrom(fresh);
     }
 
     public void CopyFrom(AppConfig other)
     {
-        CountdownJsonUrl = other.CountdownJsonUrl;
-        SoundsJsonUrl = other.SoundsJsonUrl;
+        DataJsonUrl = other.DataJsonUrl;
         NeteaseApiBase = other.NeteaseApiBase;
         NeteaseCookie = other.NeteaseCookie;
         SentenceIntervalMinutes = other.SentenceIntervalMinutes;
@@ -238,8 +267,7 @@ public class AppConfig
         if (Volume < 0) Volume = 0;
         if (Volume > 100) Volume = 100;
 
-        CountdownJsonUrl = CountdownJsonUrl.Trim();
-        SoundsJsonUrl = SoundsJsonUrl.Trim();
+        DataJsonUrl = DataJsonUrl.Trim();
         NeteaseApiBase = NeteaseApiBase.Trim();
         if (NeteaseApiBase.Length == 0) NeteaseApiBase = "https://wyyapi.hjymoon.us.ci/";
         NeteaseCookie = NeteaseCookie.Trim();

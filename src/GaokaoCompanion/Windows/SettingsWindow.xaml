@@ -37,14 +37,9 @@
 
                     <TextBlock Text="数据源与接口" Style="{StaticResource M3SectionHeader}"/>
 
-                    <TextBlock Text="倒计时 JSON 地址" Style="{StaticResource M3FieldLabel}"/>
-                    <TextBox Text="{Binding CountdownJsonUrl, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource M3TextBox}"/>
-                    <TextBlock Text="格式:{ &quot;date&quot;: &quot;2026-06-07 09:00&quot;, &quot;event&quot;: &quot;2026年高考&quot;, &quot;sentences&quot;: [&quot;…&quot;] }"
-                               Style="{StaticResource M3FieldLabel}" TextWrapping="Wrap"/>
-
-                    <TextBlock Text="句子语音 JSON 地址(功能:Ctrl+H+J+S)" Style="{StaticResource M3FieldLabel}"/>
-                    <TextBox Text="{Binding SoundsJsonUrl, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource M3TextBox}"/>
-                    <TextBlock Text="格式:{ &quot;句子&quot;: &quot;https://…/a.mp3&quot;, … }"
+                    <TextBlock Text="数据 JSON 地址(倒计时 + 句子音效共用一个文件)" Style="{StaticResource M3FieldLabel}"/>
+                    <TextBox Text="{Binding DataJsonUrl, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource M3TextBox}"/>
+                    <TextBlock Text="文件内容 = 倒计时对象 + 句子→音频映射对象,两个对象直接并列在一个文件里:&#10;{ &quot;date&quot;: &quot;2027-06-30 09:00:00&quot;, &quot;event&quot;: &quot;阶段考&quot;, &quot;sentences&quot;: [&quot;…&quot;] }&#10;{ &quot;句子一&quot;: &quot;https://…/a.mp3&quot;, &quot;句子二&quot;: &quot;https://…/b.mp3&quot; }"
                                Style="{StaticResource M3FieldLabel}" TextWrapping="Wrap"/>
 
                     <TextBlock Text="网易云 API 地址(功能:Ctrl+H+J+N)" Style="{StaticResource M3FieldLabel}"/>

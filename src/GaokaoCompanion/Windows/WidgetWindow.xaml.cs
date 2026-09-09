@@ -110,9 +110,9 @@ public partial class WidgetWindow : Window
         _sentenceTimer.Stop();
         _sentenceTimer.Start();
 
-        if (_lastUrl != c.CountdownJsonUrl)
+        if (_lastUrl != c.DataJsonUrl)
         {
-            _lastUrl = c.CountdownJsonUrl;
+            _lastUrl = c.DataJsonUrl;
             if (IsLoaded) LoadData();
         }
     }
@@ -122,7 +122,7 @@ public partial class WidgetWindow : Window
     private async void LoadData()
     {
         _retryTimer.Stop();
-        string url = App.Config.CountdownJsonUrl;
+        string url = App.Config.DataJsonUrl;
 
         if (string.IsNullOrWhiteSpace(url))
         {

@@ -33,7 +33,7 @@ public partial class SentenceSearchWindow : LauncherWindow
 
     private async Task LoadSoundsAsync()
     {
-        string url = App.Config.SoundsJsonUrl;
+        string url = App.Config.DataJsonUrl;
         if (string.IsNullOrWhiteSpace(url))
         {
             StatusText.Text = "未配置句子语音 JSON 地址(托盘 → 设置)";

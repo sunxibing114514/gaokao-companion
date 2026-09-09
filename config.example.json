@@ -1,6 +1,5 @@
 {
-  "countdownJsonUrl": "https://example.com/countdown.json",
-  "soundsJsonUrl": "https://example.com/sounds.json",
+  "dataJsonUrl": "https://example.com/data.json",
   "neteaseApiBase": "https://wyyapi.hjymoon.us.ci/",
   "neteaseCookie": "MUSIC_U=你的cookie值;",
   "sentenceIntervalMinutes": 5,

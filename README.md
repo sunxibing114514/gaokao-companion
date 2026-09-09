@@ -53,8 +53,7 @@ M3(Material Design 3)风格 Windows 桌面工具:高考倒计时桌面组件 + �
 
 ```jsonc
 {
-  "countdownJsonUrl": "https://…/countdown.json",   // 倒计时数据源
-  "soundsJsonUrl": "https://…/sounds.json",         // 句子→声音映射
+  "dataJsonUrl": "https://…/data.json",             // 唯一数据源:倒计时 + 句子音效共用
   "neteaseApiBase": "https://wyyapi.hjymoon.us.ci/",// 网易云 API(可换任意兼容实例)
   "neteaseCookie": "",                              // 网易云 Cookie(如 MUSIC_U=xxx;),可解锁 VIP 歌曲,留空匿名
   "sentenceIntervalMinutes": 5,                     // 句子切换间隔(分钟)
@@ -72,17 +71,15 @@ M3(Material Design 3)风格 Windows 桌面工具:高考倒计时桌面组件 + �
 }
 ```
 
-外部数据源格式:
+外部数据源格式(**一个文件装两个对象**,`dataJsonUrl` 只填一个地址):
 
 ```jsonc
-// countdownJsonUrl 指向的 JSON
+// dataJsonUrl 指向的 JSON —— 倒计时对象 + 句子→声音映射,直接并列
 {
-  "date": "2026-06-07 09:00:00",
-  "event": "2026年高考",
+  "date": "2027-06-30 09:00:00",
+  "event": "阶段考",
   "sentences": ["愿你合上笔盖的刹那,有侠客收剑入鞘的骄傲", "…"]
 }
-
-// soundsJsonUrl 指向的 JSON
 {
   "句子一": "https://…/a.mp3",
   "句子二": "https://…/b.mp3"
