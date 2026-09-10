@@ -173,7 +173,16 @@ public partial class MusicSearchWindow : LauncherWindow
 
             string label = song.Artist.Length > 0 ? song.Name + " - " + song.Artist : song.Name;
             App.Audio.Play(url, label, seek);
-            TryClose(); // 已开始播放 → 搜索框关闭,右下角弹出「正在播放」小窗
+            // 等 MediaOpened 确认真正出声后才关窗;失败/超时则留在窗口显示错误
+            bool started = await App.Audio.WaitOpenedAsync(TimeSpan.FromSeconds(8));
+            if (started)
+            {
+                TryClose(); // 已出声 → 搜索框关闭,右下角弹出「正在播放」小窗
+            }
+            else
+            {
+                StatusText.Text = "播放未能开始:" + App.Audio.StatusText + "(可重试)";
+            }
         }
         catch (Exception ex)
         {

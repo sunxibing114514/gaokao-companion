@@ -126,7 +126,7 @@ public partial class SentenceSearchWindow : LauncherWindow
         PlaySelected();
     }
 
-    private void PlaySelected()
+    private async void PlaySelected()
     {
         if (ResultList.SelectedItem is not string sentence) return;
         if (!_sounds.TryGetValue(sentence, out var url))
@@ -135,6 +135,15 @@ public partial class SentenceSearchWindow : LauncherWindow
             return;
         }
         App.Audio.Play(url, sentence);
-        TryClose(); // 已开始播放 → 搜索框关闭,右下角弹出「正在播放」小窗
+        // 等确认出声后再关窗,失败则留下错误提示
+        bool started = await App.Audio.WaitOpenedAsync(TimeSpan.FromSeconds(8));
+        if (started)
+        {
+            TryClose(); // 已出声 → 搜索框关闭,右下角弹出「正在播放」小窗
+        }
+        else
+        {
+            StatusText.Text = "播放未能开始:" + App.Audio.StatusText + "(可重试)";
+        }
     }
 }

@@ -13,6 +13,8 @@ public class AudioManager
     private readonly Dispatcher _uiDispatcher;
     private TimeSpan _seekTarget;
     private bool _seekPending;
+    /// <summary>本次 Play 的出声确认源:MediaOpened=true / MediaFailed=false;用于搜索框「确认开始播放后才关闭」。</summary>
+    private TaskCompletionSource<bool>? _openedTcs;
 
     public string StatusText { get; private set; } = "空闲";
     public event Action<string>? StatusChanged;
@@ -26,12 +28,16 @@ public class AudioManager
         _player.MediaOpened += OnMediaOpened;
         _player.MediaFailed += (s, e) =>
         {
-            SetStatus("播放失败:" + (e.ErrorException?.Message ?? "未知错误"));
+            string msg = "播放失败:" + (e.ErrorException?.Message ?? "未知错误");
+            Logger.Error(msg);
+            SetStatus(msg);
+            _openedTcs?.TrySetResult(false);
             FirePlaybackChanged(null);
         };
         _player.MediaEnded += (s, e) =>
         {
             SetStatus("播放结束");
+            _openedTcs?.TrySetResult(true);
             FirePlaybackChanged(null);
         };
     }
@@ -49,6 +55,8 @@ public class AudioManager
     {
         Safe(() =>
         {
+            Logger.Info("媒体已打开,开始出声");
+            _openedTcs?.TrySetResult(true);
             if (!_seekPending) return;
             _seekPending = false;
             try { _player.Position = _seekTarget; }
@@ -63,6 +71,7 @@ public class AudioManager
         {
             try
             {
+                _openedTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 _seekPending = false;
                 _player.Stop();
                 _player.Close();
@@ -70,6 +79,7 @@ public class AudioManager
                 if (string.IsNullOrWhiteSpace(url))
                 {
                     SetStatus("未获取到音频链接");
+                    _openedTcs.TrySetResult(false);
                     return;
                 }
 
@@ -79,6 +89,7 @@ public class AudioManager
                     _seekPending = true;
                 }
 
+                Logger.Info("开始播放:" + label + " ← " + url);
                 _player.Open(new Uri(url, UriKind.Absolute));
                 _player.Play();
 
@@ -90,9 +101,20 @@ public class AudioManager
             }
             catch (Exception ex)
             {
+                Logger.Error("启动播放失败", ex);
                 SetStatus("播放失败:" + ex.Message);
+                _openedTcs?.TrySetResult(false);
             }
         });
+    }
+
+    /// <summary>等待本次播放真正出声(MediaOpened);失败返回 false;超时返回 false。</summary>
+    public async Task<bool> WaitOpenedAsync(TimeSpan timeout)
+    {
+        var tcs = _openedTcs;
+        if (tcs == null) return false;
+        var done = await Task.WhenAny(tcs.Task, Task.Delay(timeout)).ConfigureAwait(true);
+        return done == tcs.Task && tcs.Task.Result;
     }
 
     public void Stop()

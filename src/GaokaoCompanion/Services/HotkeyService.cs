@@ -7,7 +7,7 @@ public enum Chord
 {
     /// <summary>Ctrl+Alt+S:句子语音搜索</summary>
     SentenceSearch,
-    /// <summary>Ctrl+Alt+M:网易云音乐搜索</summary>
+    /// <summary>Ctrl+Alt+N:网易云音乐搜索</summary>
     MusicSearch,
     /// <summary>Ctrl+Alt+X:停止播放</summary>
     StopAudio,
@@ -15,7 +15,7 @@ public enum Chord
 
 /// <summary>
 /// 全局组合热键(WH_KEYBOARD_LL 低级键盘钩子,只监听不拦截,不影响其它软件):
-/// Ctrl+Alt+S = 句子语音 / Ctrl+Alt+M = 网易云音乐 / Ctrl+Alt+X = 停止播放。
+/// Ctrl+Alt+S = 句子语音 / Ctrl+Alt+N = 网易云音乐 / Ctrl+Alt+X = 停止播放。
 /// 冲突规避:要求 exactly Ctrl+Alt(按住 Shift 或 Win 时不触发,避免误触);
 /// 刻意避开系统保留键(Win 系列、Alt+Tab)与高频应用组合(Ctrl+Shift+*、Alt+单键);
 /// 停止键用 X 而非 C(Ctrl+Alt+C 被截图/OCR 类工具占用的概率更高)。
@@ -37,7 +37,7 @@ public class HotkeyService : IDisposable
     private const int VkLWin = 0x5B;
     private const int VkRWin = 0x5C;
     private const int VkS = 0x53;
-    private const int VkM = 0x4D;
+    private const int VkN = 0x4E;
     private const int VkX = 0x58;
 
     [StructLayout(LayoutKind.Sequential)]
@@ -129,7 +129,7 @@ public class HotkeyService : IDisposable
         if (!ctrl || !alt || shift || win) return; // 仅响应 Ctrl+Alt(+字母)
 
         TryFire(Chord.SentenceSearch, VkS, _down.Contains(VkS));
-        TryFire(Chord.MusicSearch, VkM, _down.Contains(VkM));
+        TryFire(Chord.MusicSearch, VkN, _down.Contains(VkN));
         TryFire(Chord.StopAudio, VkX, _down.Contains(VkX));
     }
 
@@ -145,7 +145,7 @@ public class HotkeyService : IDisposable
     private static bool BelongsTo(Chord chord, int vk) => chord switch
     {
         Chord.SentenceSearch => vk == VkS || IsCtrl(vk) || IsAlt(vk),
-        Chord.MusicSearch => vk == VkM || IsCtrl(vk) || IsAlt(vk),
+        Chord.MusicSearch => vk == VkN || IsCtrl(vk) || IsAlt(vk),
         Chord.StopAudio => vk == VkX || IsCtrl(vk) || IsAlt(vk),
         _ => false,
     };
